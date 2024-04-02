@@ -102,7 +102,7 @@ library(ggpmisc)
 ```
 
 ```{r}
-weather <- read.csv("../Data/fieldweatherdata.csv")
+weather <- read.csv("../Data/weather_monthsum.csv")
 
 weather
 ```
@@ -235,8 +235,8 @@ Let's select a few variables to run some tests.
 Two uncorrelated variables:
 ```{r uncorrelated}
 weather %>%
-  ggplot(aes(x = mean_dayl.s.Apr, 
-             y = sum_prcp.mm.Oct)) +
+  ggplot(aes(x = mean_dayl.s_Apr, 
+             y = sum_prcp.mm_Oct)) +
   geom_point() +
   geom_smooth(method="lm") +
   stat_correlation()
@@ -245,8 +245,8 @@ weather %>%
 Two correlated variables:
 ```{r correlated}
 weather %>%
-  ggplot(aes(x = mean_dayl.s.Apr, 
-             y = mean_dayl.s.May))+
+  ggplot(aes(x = mean_dayl.s_Apr, 
+             y = mean_dayl.s_May))+
   geom_point() +
   geom_smooth(method="lm")
 
@@ -255,7 +255,7 @@ weather %>%
 Now let's fit some models with one or two uncorrelated and correlated variables explaining fiberstrength and see what happens.  
 
 ```{r strength ~ mean_dayl.s_Apr}
-lm_dayl.apr <- lm(strength_gtex ~ mean_dayl.s.Apr,
+lm_dayl.apr <- lm(strength_gtex ~ mean_dayl.s_Apr,
                   data = weather) %>%
   tidy() %>%
   filter(term != "(Intercept)") %>%
@@ -266,7 +266,7 @@ lm_dayl.apr
 ```
 
 ```{r strength ~ sum_prcp.mm_Oct}
-lm_prp.oct <- lm(strength_gtex ~ sum_prcp.mm.Oct,
+lm_prp.oct <- lm(strength_gtex ~ sum_prcp.mm_Oct,
    data = weather) %>%
   tidy() %>%
   filter(term!="(Intercept)") %>%
@@ -276,8 +276,8 @@ lm_prp.oct
 ```
 
 ```{r strength ~ mean_dayl.s_Apr + sum_prcp.mm_Oct}
-lm_dayl.prcp <- lm(strength_gtex ~ mean_dayl.s.Apr + 
-                   sum_prcp.mm.Oct,
+lm_dayl.prcp <- lm(strength_gtex ~ mean_dayl.s_Apr + 
+                   sum_prcp.mm_Oct,
    data = weather) %>%
   tidy() %>%
   filter(term != "(Intercept)") %>%
@@ -288,8 +288,8 @@ lm_dayl.prcp
 ```
 
 ```{r strength ~ mean_dayl.s_Apr + mean_dayl.s_May}
-lm_daylapr.daylmay <- lm(strength_gtex ~ mean_dayl.s.Apr + 
-                  mean_dayl.s.May,
+lm_daylapr.daylmay <- lm(strength_gtex ~ mean_dayl.s_Apr + 
+                  mean_dayl.s_May,
    data = weather) %>%
   tidy() %>%
   filter(term!="(Intercept)") %>%
@@ -334,8 +334,8 @@ General rule of thumb:
 Let's check the variance inflation factor (VIF) of both uncorrelated and correlated models
 ```{r vif uncorrelated}
 # Uncorrelated
-lm(strength_gtex ~ mean_dayl.s.Apr +
-     mean_dayl.s.Oct,
+lm(strength_gtex ~ mean_dayl.s_Apr +
+     mean_dayl.s_Oct,
    data = weather) %>%
   vif()
 ```
@@ -343,8 +343,8 @@ lm(strength_gtex ~ mean_dayl.s.Apr +
 
 ```{r vif correlated}
 # Correlated
-lm(strength_gtex ~ mean_dayl.s.Apr + 
-                  mean_dayl.s.May,
+lm(strength_gtex ~ mean_dayl.s_Apr + 
+                  mean_dayl.s_May,
    data = weather) %>%
   vif()
 
